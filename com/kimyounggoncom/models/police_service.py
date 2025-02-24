@@ -1,8 +1,11 @@
 
+import os
 import pandas as pd
 
 from com.kimyounggoncom.models.data_reader import DataReader
 from com.kimyounggoncom.models.dataset import Dataset
+from com.kimyounggoncom.models.gogle_singleton import KeyRetrieverSingleton
+
 
 
 
@@ -10,6 +13,7 @@ class PoliceService:
 #self는 서비스 , this 는 dataset
     reader = DataReader()
     dataset = Dataset()
+    
 
     def new_model(self, fname) -> object:
         reader = self.reader
@@ -57,9 +61,41 @@ class PoliceService:
         print(f"🤩🤔🎒🤦‍♀️경찰서 관서명 리스트:{station_names}")
         station_addrs = []
         station_lats = []
-        station_langs = []
-        # gmaps = DataReader.create_gmaps()
+        station_lngs = []
+
+        singleton1 = KeyRetrieverSingleton()
+        singleton2 = KeyRetrieverSingleton()
+
+        
+
+        gmaps = DataReader.create_gmaps()
+        for name in station_names:
+            tmp = gmaps.geocode(name, language = 'ko')
+            print(f"""{name}의 검색 결과: {tmp[0].get("formatted_address")}""")
+            station_addrs.append(tmp[0].get("formatted_address"))
+            tmp_loc = tmp[0].get("geometry")
+            station_lats.append(tmp_loc['location']['lat'])
+            station_lngs.append(tmp_loc['location']['lng'])
+        print(f"🐻🐻🐻자치구 리스트: {station_addrs}")
+        gu_names = []
+        for addr in station_addrs:
+            tmp = addr.split()
+            tmp_gu = [gu for gu in tmp if gu[-1] == '구'][0]
+            gu_names.append(tmp_gu)
+        [print(f"❤️❤️자치구 리스트 2 : {gu_names}")]
+        crime['자치구'] = gu_names
+        
+        save_dir ="C:\\Users\\bitcamp\\Documents\\yg20250220\\com\\kimyounggoncom\\saved_data"
+
+        if not os.path.exists(save_dir):
+           os.makedirs(save_dir)
+        
+        crime['자치구'] = gu_names
+        crime.to_csv(os.path.join(save_dir, "police_position.csv"), index=False) #내가 있는 위치에서 position_police에 대한 데이터를 saved_data에 올려줘.....올릴 때는 점 두개 쓰고 /를 쓴다.
         return this
+
+
+       
     
     @staticmethod
     def pop_ratio(this) -> object:
