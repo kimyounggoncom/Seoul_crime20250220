@@ -45,8 +45,5 @@ class DataReader:
         file = self.new_file()
         return json.load(open(file))
     
-    @staticmethod
-    def create_gmaps():
-        return googlemaps.Client(key='...')
-   
+    
    
