@@ -8,7 +8,7 @@ class PoliceController:
     service =   PoliceService()
     def modeling(self, *args): 
         this = self.service.preprocess(*args)
-        self.print_this(this)
+        # self.print_this(this)
         return this
         
     @staticmethod

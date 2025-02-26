@@ -5,7 +5,7 @@ import pandas as pd
 
 @dataclass
 class Dataset:
-    cctv : object
+    cctv : object #이름 : 타입(value)
     crime : object
     pop : object
     

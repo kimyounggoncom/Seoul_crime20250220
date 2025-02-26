@@ -14,53 +14,51 @@ class PoliceService:
     
     def preprocess(self, *args) -> object:
         print("----------모델 전처리 시작---------")
-        temp = []
-        for i in list(args):
-            # print(f"args 값 출력: {i}")
-            temp.append(i)
-        # print("🤗🙂😒💸",temp)
-
         this = self.dataset
-        print(f"*"*20,"🔥1.CCTV 편집 ")
-        this.cctv = self.create_matrix(temp[0])
-        this = self.update_cctv(this)
-        this = self.save_object_to_csv(this, os.path.join(save_dir, "cctv_in_seoul.csv"))
-        print(f"*"*20,"🐬1. CRIME 편집 ")
-        this.crime = self.create_matrix(temp[1])
-        this = self.update_crime(this)
-        this = self.save_object_to_csv(this, os.path.join(save_dir, "crime_in_seoul.csv"))
-        print(f"*"*20,"🌥️3. POP 편집 ")
-        this.pop = self.create_matrix(temp[2])
-        this = self.update_pop(this)
-        this = self.save_object_to_csv(this, os.path.join(save_dir, "pop_in_seoul.csv"))
+        for i in list(args):
+            # print("🐻🐻🐻🐻",i)
+            self.save_object_to_csv(this, i)
         return this
     
     def create_matrix(self, fname) -> object:
-        reader = self.reader
         print(f"😎🥇🐰파일명 : {fname}")
+        reader = self.reader
+        # print(f"😎🥇🐰파일명 : {fname}")
         reader.fname = fname
+
         if fname.endswith('csv'):
             return reader.csv_to_dframe()
         elif fname.endswith('xls'):
             return reader.xls_to_dframe(header=2, usecols= 'B,D,G,J,N') 
     
-    def save_object_to_csv(self, this, param_path) -> object:
-        print(f"🐻🐻🐻처음 {param_path}")
-        param_path = os.path.join(save_dir, "cctv_in_seoul.csv")
-        if not os.path.exists(param_path) and param_path == "cctv_in_seoul.csv":
-            print(f"🐻🐻🐻1 {param_path}")
-            this = self.update_cctv(this)
-            this.cctv.to_csv(os.path.join(save_dir, "cctv_in_seoul.csv"), index = False)
-            
-        elif os.path.exists(param_path) and param_path == "crime_in_seoul.csv":
-            print(f"🐻🐻🐻2 {param_path}")
-            this.crime.to_csv(os.path.join(save_dir, "crime_in_seoul.csv"), index = False)
+    def save_object_to_csv(self, this, fname) -> object:
+        print(f"🐻🐻🐻처음 {fname}")
+        
+        full_name = os.path.join(save_dir, fname)
 
-        elif os.path.exists(param_path) and param_path == "pop_in_seoul.xls":
-            print(f"🐻🐻🐻3 {param_path}")
-            this.pop.to_csv(os.path.join(save_dir, "pop_in_seoul.csv"), index = False)
+        if not os.path.exists(full_name) and fname == "cctv_in_seoul.csv":
+            print(f"*"*20,"🔥1.CCTV 편집 ")
+            print(f"🐻🐻🐻1 {fname}")
+            this.cctv = self.create_matrix(fname)
+            this = self.update_cctv(this)
+            
+            
+        elif not os.path.exists(full_name) and fname == "crime_in_seoul.csv":
+            print(f"🐻🐻🐻2 {fname}")
+            print(f"*"*20,"🐬1. CRIME 편집 ")
+            this.crime = self.create_matrix(fname)
+            this = self.update_crime(this)
+            
+
+        elif not os.path.exists(full_name) and fname == "pop_in_seoul.xls":
+            print(f"🐻🐻🐻3 {fname}")
+            print(f"*"*20,"🌥️3. POP 편집 ")
+            this.pop = self.create_matrix(fname)
+            this = self.update_pop(this)
+            
+
         else:
-            print(f"파일이 이미 존재합니다. {param_path}")
+            print(f"파일이 이미 존재합니다. {fname}")
         return this
     
 
@@ -75,12 +73,6 @@ class PoliceService:
         return this
         
         
-        
-        
-        
-       
-        
-    
     @staticmethod
     def update_crime(this) -> object:
         print(f"CRIME 데이터 헤드: {this.crime.head()}")
@@ -120,8 +112,6 @@ class PoliceService:
         return this
 
 
-       
-    
     @staticmethod
     def update_pop(this) -> object:
         pop = this.pop
